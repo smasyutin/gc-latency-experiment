@@ -1,0 +1,8 @@
+FROM openjdk:15
+
+COPY Main.java .
+RUN javac Main.java
+
+ENV JAVA_OPS="-Xmx1G -XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+ENTRYPOINT ["java", "Main"]
+CMD ["1000000", "200000"]

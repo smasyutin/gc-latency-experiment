@@ -1,0 +1,8 @@
+FROM openjdk:8
+
+COPY Main.java .
+RUN javac Main.java
+
+ENV JAVA_OPS="-Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:ParallelGCThreads=2"
+ENTRYPOINT ["java", "Main"]
+CMD ["1000000", "200000"]

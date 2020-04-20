@@ -1,0 +1,11 @@
+FROM oracle/graalvm-ce:20.0.0-java11
+
+RUN gu install native-image
+
+COPY Main.java .
+RUN javac Main.java && native-image Main
+
+ENV PATH=/:$PATH
+
+ENTRYPOINT ["main"]
+CMD ["1000000", "200000"]
