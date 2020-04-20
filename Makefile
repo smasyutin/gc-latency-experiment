@@ -1,44 +1,51 @@
-RESULTS = d/results.txt go/results.txt haskell/results.txt java/results.txt ocaml/results.txt php/results.txt racket/results.txt ruby/results.txt node/results.txt
+RESULTS=go/results.txt java/results.txt java/results-graalvm.txt java/results-graalvm-native.txt java/results-jdk8.txt java/results-jdk15.txt kotlin/results.txt kotlin/results-native.txt kotlin/results-jdk15.txt node/results.txt
+RUN_PARAMS=10000000 200000
 
-.PHONY: all clean
+.PHONY: all build clean
 
 all: $(RESULTS)
 
 clean:
 	rm -f $(RESULTS)
 
-d/results.txt: d/Dockerfile d/main.d
-	docker build -t gc-d d
-	docker run gc-d > $@
+build:
+	docker build -t gc-go -f go/Dockerfile go
+	docker build -t gc-java -f java/Dockerfile java
+	docker build -t gc-java-graalvm -f java/Dockerfile.graalvm java
+	docker build -t gc-java-graalvm-native -f java/Dockerfile.graalvm-native java
+	docker build -t gc-java-jdk8 -f java/Dockerfile.jdk8 java
+	docker build -t gc-java-jdk15 -f java/Dockerfile.jdk15 java
+	docker build -t gc-kotlin -f kotlin/Dockerfile kotlin
+	docker build -t gc-kotlin-native -f kotlin/Dockerfile.native kotlin
+	docker build -t gc-kotlin-jdk15 -f kotlin/Dockerfile.jdk15 kotlin
+	docker build -t gc-node -f node/Dockerfile node
 
 go/results.txt: go/Dockerfile go/main.go
-	docker build -t gc-go go
-	docker run gc-go > $@
-
-haskell/results.txt: haskell/Dockerfile haskell/Main.hs
-	docker build -t gc-haskell haskell
-	docker run gc-haskell > $@
+	docker run gc-go $(RUN_PARAMS) > $@
 
 java/results.txt: java/Dockerfile java/Main.java
-	docker build -t gc-java java
-	docker run gc-java > $@
+	docker run gc-java $(RUN_PARAMS) > $@
 
-ocaml/results.txt: ocaml/Dockerfile ocaml/_tags ocaml/main.ml
-	docker build -t gc-ocaml ocaml
-	docker run gc-ocaml > $@
+java/results-graalvm.txt: java/Dockerfile.graalvm java/Main.java
+	docker run gc-java-graalvm $(RUN_PARAMS) > $@
 
-php/results.txt: php/Dockerfile php/main.php
-	docker build -t gc-php php
-	docker run gc-php > $@
+java/results-graalvm-native.txt: java/Dockerfile.graalvm-native java/Main.java
+	docker run gc-java-graalvm-native $(RUN_PARAMS) > $@
 
-racket/results.txt: racket/Dockerfile racket/docker-entrypoint.sh racket/main.rkt
-	docker build -t gc-racket racket
-	docker run gc-racket > $@
+java/results-jdk8.txt: java/Dockerfile.jdk8 java/Main.java
+	docker run gc-java-jdk8 $(RUN_PARAMS) > $@
 
-ruby/results.txt: ruby/Dockerfile ruby/main.rb
-	docker build -t gc-ruby ruby
-	docker run gc-ruby > $@
+java/results-jdk15.txt: java/Dockerfile.jdk15 java/Main.java
+	docker run gc-java-jdk15 $(RUN_PARAMS) > $@
+
+kotlin/results.txt: kotlin/Dockerfile kotlin/main.kt
+	docker run gc-kotlin $(RUN_PARAMS) > $@
+
+kotlin/results-native.txt: kotlin/Dockerfile.native kotlin/main.kt
+	docker run gc-kotlin-native $(RUN_PARAMS) > $@
+
+kotlin/results-jdk15.txt: kotlin/Dockerfile.jdk15 kotlin/main.kt
+	docker run gc-kotlin-jdk15 $(RUN_PARAMS) > $@
 
 node/results.txt: node/Dockerfile node/main.js
-	docker build -t gc-node node
-	docker run gc-node > $@
+	docker run gc-node $(RUN_PARAMS) > $@
