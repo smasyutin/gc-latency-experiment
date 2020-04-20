@@ -1,4 +1,8 @@
-FROM openjdk:8u141
+FROM adoptopenjdk:14-hotspot
+
 COPY Main.java .
 RUN javac Main.java
-ENTRYPOINT ["java", "-Xmx512m", "-XX:+PrintFlagsFinal", "-XX:+PrintGCTimeStamps", "-verbosegc", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=10", "-XX:ParallelGCThreads=2", "Main"]
+
+ENV JAVA_OPS="-Xmx512M -XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+ENTRYPOINT ["java", "Main"]
+CMD ["1000000", "200000"]
