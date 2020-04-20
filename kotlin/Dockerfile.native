@@ -1,0 +1,11 @@
+FROM smasyutin/kotlin:1.3.72-native
+
+ENV APP_HOME=/home
+
+COPY main.kt .
+RUN kotlinc-native main.kt -o $APP_HOME/main
+
+ENV PATH=$APP_HOME:$PATH
+
+ENTRYPOINT ["main.kexe"]
+CMD ["1000000", "200000"]
